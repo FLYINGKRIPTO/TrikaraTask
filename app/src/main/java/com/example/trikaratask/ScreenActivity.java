@@ -36,13 +36,15 @@ public class ScreenActivity extends AppCompatActivity {
         update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent in = new Intent(ScreenActivity.this,CreateActivity.class);
+                startActivity(in);
             }
         });
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent in = new Intent(ScreenActivity.this,CreateActivity.class);
+                startActivity(in);
             }
         });
     }
