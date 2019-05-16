@@ -1,6 +1,7 @@
 package com.example.trikaratask;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -11,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -54,7 +56,11 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.MyViewHolder
 
         if(userDetails.getAvatar()!= null){
             Log.d( TAG,"onBindViewHolder: avatar link  "+userDetails.getAvatar());
-            Glide.with(mContext).load(userDetails.getAvatar()).into(myViewHolder.avatar);
+            Uri uri = Uri.parse(userDetails.getAvatar());
+            Log.d(TAG, "onBindViewHolder: uri "+ uri);
+            Glide.with(mContext).load(uri).into(myViewHolder.avatar);
+            Picasso.get().load(uri).into(myViewHolder.avatar);
+
 
         }
         else

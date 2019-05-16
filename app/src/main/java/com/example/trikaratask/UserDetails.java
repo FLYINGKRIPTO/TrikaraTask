@@ -7,6 +7,13 @@ public class UserDetails {
     private String pageNumber;
     private String avatar;
 
+    public UserDetails(int id, String name, String email, String pageNumber, String avatar) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.pageNumber = pageNumber;
+        this.avatar = avatar;
+    }
 
     public UserDetails(String pageNumber){
         this.pageNumber = pageNumber;

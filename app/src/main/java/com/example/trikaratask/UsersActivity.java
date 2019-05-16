@@ -116,7 +116,7 @@ public class UsersActivity extends AppCompatActivity {
 
                         try{
                             page_number = Integer.parseInt(response.getString("page"));
-                            UserDetails userDetails = new UserDetails("Page Number : "+String.valueOf(page_number));
+                            UserDetails userDetails = new UserDetails(1,"","","Page Number : "+String.valueOf(page_number),"");
                             userDetailsList.add(userDetails);
                             usersAdapter.notifyDataSetChanged();
                             Log.d(TAG, "newResponse Method onResponse: response no "+ toString);
