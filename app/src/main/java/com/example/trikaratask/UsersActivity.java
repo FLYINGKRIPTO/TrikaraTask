@@ -3,6 +3,9 @@ package com.example.trikaratask;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -19,6 +22,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class UsersActivity extends AppCompatActivity {
 
     TextView textView ;
@@ -28,6 +34,9 @@ public class UsersActivity extends AppCompatActivity {
     private static final String TAG = "UsersActivity";
     private RequestQueue mQueue;
     private RequestQueue gQueue;
+    private List<UserDetails> userDetailsList = new ArrayList<>();
+    private RecyclerView recyclerView;
+    private UsersAdapter usersAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +52,16 @@ public class UsersActivity extends AppCompatActivity {
                 jsonParse();
             }
         });
+
+        recyclerView = findViewById(R.id.recycler_items);
+        usersAdapter = new UsersAdapter(userDetailsList);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(usersAdapter);
+
+
+
     }
     private  void jsonParse(){
 
@@ -53,6 +72,7 @@ public class UsersActivity extends AppCompatActivity {
         //uriBuilder.appendQueryParameter("page",)
         final JsonObjectRequest  request = new JsonObjectRequest(Request.Method.GET, String.valueOf(baseUri), null,
                 new Response.Listener<JSONObject>() {
+
                     @Override
                     public void onResponse(JSONObject response) {
 
@@ -62,13 +82,15 @@ public class UsersActivity extends AppCompatActivity {
 
 
                             for(int j=1; j<=total_pages_string;j++){
+                                UserDetails userDetails = new UserDetails(String.valueOf(j));
+                                userDetailsList.add(userDetails);
+                                usersAdapter.notifyDataSetChanged();
                                 uriBuilder.appendQueryParameter("page", String.valueOf(j));
-                                Log.d(TAG, "onResponse: "+uriBuilder.toString());
                                 newResponse(uriBuilder.toString());
+                                Log.d(TAG, "json Response Method onResponse: "+uriBuilder.toString());
                                 uriBuilder.clearQuery();
-
+                                mQueue.stop();
                             }
-
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -86,13 +108,14 @@ public class UsersActivity extends AppCompatActivity {
     }
 
     private void newResponse(final String toString) {
+        Log.d(TAG, "newResponse: Method called ");
         final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, toString, null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
 
                         try{
-                            Log.d(TAG, "onResponse: response no "+ toString);
+                            Log.d(TAG, "newResponse Method onResponse: response no "+ toString);
                             JSONArray jsonArray =  response.getJSONArray("data");
                             for(int i = 0 ; i<jsonArray.length(); i++){
                                 JSONObject data = jsonArray.getJSONObject(i);
@@ -102,8 +125,13 @@ public class UsersActivity extends AppCompatActivity {
                                 String lastName = data.getString("last_name");
                                 String avatar = data.getString("avatar");
 
-                                textView.append("ID :" +id +"\n"+ " Name : " +firstName+" "+lastName+
-                                        "\n"+" Email : "+ email + "\n\n");
+                            //  textView.append("ID :" +id +"\n"+ " Name : " +firstName+" "+lastName+
+                            //            "\n"+" Email : "+ email + "\n\n");
+                                UserDetails userDetails = new UserDetails(id,firstName+" "+lastName,email);
+                                userDetailsList.add(userDetails);
+                                usersAdapter.notifyDataSetChanged();
+                              
+
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -118,6 +146,7 @@ public class UsersActivity extends AppCompatActivity {
             }
         });
         gQueue.add(request);
+
     }
 
 
