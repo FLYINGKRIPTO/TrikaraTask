@@ -30,7 +30,7 @@ public class UsersActivity extends AppCompatActivity {
     TextView textView ;
     Button usersListButton;
     TextView total_pages;
-    int total_pages_string;
+    int total_pages_string,page_number;
     private static final String TAG = "UsersActivity";
     private RequestQueue mQueue;
     private RequestQueue gQueue;
@@ -54,7 +54,7 @@ public class UsersActivity extends AppCompatActivity {
         });
 
         recyclerView = findViewById(R.id.recycler_items);
-        usersAdapter = new UsersAdapter(userDetailsList);
+        usersAdapter = new UsersAdapter(userDetailsList,this);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -82,14 +82,14 @@ public class UsersActivity extends AppCompatActivity {
 
 
                             for(int j=1; j<=total_pages_string;j++){
-                                UserDetails userDetails = new UserDetails(String.valueOf(j));
-                                userDetailsList.add(userDetails);
-                                usersAdapter.notifyDataSetChanged();
+                              //  UserDetails userDetails = new UserDetails(String.valueOf(j));
+                              //  userDetailsList.add(userDetails);
+                               // usersAdapter.notifyDataSetChanged();
                                 uriBuilder.appendQueryParameter("page", String.valueOf(j));
                                 newResponse(uriBuilder.toString());
-                                Log.d(TAG, "json Response Method onResponse: "+uriBuilder.toString());
+                             //   Log.d(TAG, "json Response Method onResponse: "+uriBuilder.toString());
                                 uriBuilder.clearQuery();
-                                mQueue.stop();
+                            //    mQueue.stop();
                             }
 
                         } catch (JSONException e) {
@@ -115,6 +115,10 @@ public class UsersActivity extends AppCompatActivity {
                     public void onResponse(JSONObject response) {
 
                         try{
+                            page_number = Integer.parseInt(response.getString("page"));
+                            UserDetails userDetails = new UserDetails("Page Number : "+String.valueOf(page_number));
+                            userDetailsList.add(userDetails);
+                            usersAdapter.notifyDataSetChanged();
                             Log.d(TAG, "newResponse Method onResponse: response no "+ toString);
                             JSONArray jsonArray =  response.getJSONArray("data");
                             for(int i = 0 ; i<jsonArray.length(); i++){
@@ -124,13 +128,14 @@ public class UsersActivity extends AppCompatActivity {
                                 String firstName = data.getString("first_name");
                                 String lastName = data.getString("last_name");
                                 String avatar = data.getString("avatar");
-
+                                Log.d(TAG, "onResponse: Email :"+email + " Name: "+ firstName+" "
+                                +lastName+ " "+avatar);
                             //  textView.append("ID :" +id +"\n"+ " Name : " +firstName+" "+lastName+
                             //            "\n"+" Email : "+ email + "\n\n");
-                                UserDetails userDetails = new UserDetails(id,firstName+" "+lastName,email);
-                                userDetailsList.add(userDetails);
+                                UserDetails userDetails1 = new UserDetails(id,firstName+" "+lastName,email,avatar);
+                                userDetailsList.add(userDetails1);
                                 usersAdapter.notifyDataSetChanged();
-                              
+
 
                             }
                         } catch (JSONException e) {
